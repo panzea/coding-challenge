@@ -6,9 +6,7 @@ namespace ConstructionLine.CodingChallenge
     {
         public List<Shirt> Shirts { get; set; }
 
-
         public List<SizeCount> SizeCounts { get; set; }
-
 
         public List<ColorCount> ColorCounts { get; set; }
     }

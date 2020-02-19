@@ -10,12 +10,10 @@ namespace ConstructionLine.CodingChallenge.Tests
     public class SearchEnginePerformanceTests : SearchEngineTestsBase
     {
         private List<Shirt> _shirts;
-        private SearchEngine _searchEngine;
 
         [SetUp]
         public void Setup()
         {
-            
             var dataBuilder = new SampleDataBuilder(50000);
 
             _shirts = dataBuilder.CreateShirts();
@@ -40,9 +38,7 @@ namespace ConstructionLine.CodingChallenge.Tests
             sw.Stop();
             Console.WriteLine($"Test fixture finished in {sw.ElapsedMilliseconds} milliseconds");
 
-            AssertResults(results.Shirts, options);
-            AssertSizeCounts(_shirts, options, results.SizeCounts);
-            AssertColorCounts(_shirts, options, results.ColorCounts);
+            AssertSearchEngineResults(results, options);
         }
     }
 }
