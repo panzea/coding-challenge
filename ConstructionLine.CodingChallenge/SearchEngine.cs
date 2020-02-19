@@ -22,7 +22,7 @@ namespace ConstructionLine.CodingChallenge
             }
 
             // Execute Search
-            var shirtsList = PerformSearch(_shirts, options);
+            var shirtsList = PerformSearch(options);
 
             // Execute Color count
             var colorCountsList = CountColors(shirtsList);
@@ -38,14 +38,14 @@ namespace ConstructionLine.CodingChallenge
             };
         }
 
-        private List<Shirt> PerformSearch(List<Shirt> shirts, SearchOptions options)
+        private List<Shirt> PerformSearch(SearchOptions options)
         {
             // Setup search. As the performance test indicates that you can
             // perform a search just for color, without specifying a size, it is
             // assumed that you can also search for a size without a color.
             return _shirts
                 .Where(shirt => (!options.Colors.Any() || options.Colors.Any(color => color == shirt.Color))
-                    && (options.Sizes.Any(size => !options.Sizes.Any() || size == shirt.Size)))
+                    && !options.Sizes.Any() || (options.Sizes.Any(size => size == shirt.Size)))
                 .ToList();
         }
 
