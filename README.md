@@ -1,10 +1,6 @@
 # Construction Line code challenge
 
 ## Performance Results
-50000 Items = 25ms  
-500000 Items = 123ms  
-5000000 Items = 742ms  
-
 | Records       | LINQ     | PLINQ    | Keyed
 | ------------- |:--------:|:--------:| --------:
 | 50000         | 22ms     | 17ms     | 6ms  
