@@ -14,16 +14,35 @@ namespace ConstructionLine.CodingChallenge.Tests
         [SetUp]
         public void Setup()
         {
-            var dataBuilder = new SampleDataBuilder(50000);
+            var dataBuilder = new SampleDataBuilder(50000000);
 
             _shirts = dataBuilder.CreateShirts();
-
-            _searchEngine = new SearchEngine(_shirts);
         }
 
 
         [Test]
-        public void PerformanceTest()
+        public void SearchEnginePerformanceTest()
+        {
+            _searchEngine = new SearchEngine(_shirts);
+            PerformanceTest("Search engine linq");
+        }
+
+        [Test]
+        public void SearchEngineParallelPerformanceTest()
+        {
+            _searchEngine = new SearchEngineParallel(_shirts);
+            PerformanceTest("Search engine plinq");
+        }
+
+        [Test]
+        public void SearchEngineKeyedPerformanceTest()
+        {
+            _searchEngine = new SearchEngineKeyed(_shirts);
+            PerformanceTest("Search engine keyed");
+        }
+
+
+        private void PerformanceTest(string testName)
         {
             var sw = new Stopwatch();
             sw.Start();
@@ -36,7 +55,7 @@ namespace ConstructionLine.CodingChallenge.Tests
             var results = _searchEngine.Search(options);
 
             sw.Stop();
-            Console.WriteLine($"Test fixture finished in {sw.ElapsedMilliseconds} milliseconds");
+            Console.WriteLine($"{testName} finished in {sw.ElapsedMilliseconds} milliseconds");
 
             AssertSearchEngineResults(results, options);
         }

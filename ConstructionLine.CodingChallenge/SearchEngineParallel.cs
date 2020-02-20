@@ -5,13 +5,13 @@ using System.Linq;
 
 namespace ConstructionLine.CodingChallenge
 {
-    public class SearchEngine : SearchEngineBase
+    public class SearchEngineParallel : SearchEngineBase
     {
-        public SearchEngine(List<Shirt> shirts) : base(shirts)
+        public SearchEngineParallel(List<Shirt> shirts) : base(shirts)
         { }
 
         /// <summary>
-        /// Perform search using a LINQ query
+        /// Perform search using a PLINQ query
         /// </summary>
         /// <param name="options">A set of search query options</param>
         /// <returns>A filtered list of shirts that match the search query options</returns>
@@ -21,6 +21,7 @@ namespace ConstructionLine.CodingChallenge
             // perform a search just for color, without specifying a size, it is
             // assumed that you can also search for a size without a color.
             return _shirts
+                .AsParallel()
                 .Where(shirt => (!options.Colors.Any() || options.Colors.Any(color => color == shirt.Color))
                     && !options.Sizes.Any() || (options.Sizes.Any(size => size == shirt.Size)))
                 .ToList();
