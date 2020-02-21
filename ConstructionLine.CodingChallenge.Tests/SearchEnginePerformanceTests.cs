@@ -14,7 +14,7 @@ namespace ConstructionLine.CodingChallenge.Tests
         [SetUp]
         public void Setup()
         {
-            var dataBuilder = new SampleDataBuilder(50000000);
+            var dataBuilder = new SampleDataBuilder(50000);
 
             _shirts = dataBuilder.CreateShirts();
         }
