@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ConstructionLine.CodingChallenge.Abstractions;
+using ConstructionLine.CodingChallenge.Domain;
 using NUnit.Framework;
 
 namespace ConstructionLine.CodingChallenge.Tests
@@ -9,14 +11,16 @@ namespace ConstructionLine.CodingChallenge.Tests
     {
         protected ISearchEngine _searchEngine;
 
-        protected void AssumeSearchEngineWithNoResults()
+        protected List<Shirt> AssumeSearchEngineWithNoResults()
         {
             var noShirts = new List<Shirt>();
 
             _searchEngine = new SearchEngine(noShirts);
+
+            return noShirts;
         }
 
-        protected void AssumeSearchEngineWithResults()
+        protected List<Shirt> AssumeSearchEngineWithResults()
         {
             // GF: Not using SampleDataBuilder here so that we get a consistent set of results that
             // are predictable and will no change over the lifetime of the tests so that we can ensure
@@ -31,6 +35,8 @@ namespace ConstructionLine.CodingChallenge.Tests
             };
 
             _searchEngine = new SearchEngine(shirts);
+
+            return shirts;
         }
 
         protected static void AssertResults(List<Shirt> shirts, SearchOptions options)
@@ -65,9 +71,12 @@ namespace ConstructionLine.CodingChallenge.Tests
                 Assert.That(sizeCount, Is.Not.Null, $"Size count for '{size.Name}' not found in results");
 
                 var expectedSizeCount = shirts
-                    .Count(shirt => shirt.Size.Id == size.Id);
+                    .Count(shirt => shirt.Size.Id == size.Id
+                                && (!searchOptions.Sizes.Any() || searchOptions.Sizes.Contains(shirt.Size))
+                                && (!searchOptions.Colors.Any() || searchOptions.Colors.Contains(shirt.Color))
+                                );
 
-                Assert.That(sizeCount.Count, Is.EqualTo(expectedSizeCount), 
+                Assert.That(sizeCount.Count, Is.EqualTo(expectedSizeCount),
                     $"Size count for '{sizeCount.Size.Name}' showing '{sizeCount.Count}' should be '{expectedSizeCount}'");
             }
         }
@@ -76,25 +85,21 @@ namespace ConstructionLine.CodingChallenge.Tests
         protected static void AssertColorCounts(List<Shirt> shirts, SearchOptions searchOptions, List<ColorCount> colorCounts)
         {
             Assert.That(colorCounts, Is.Not.Null);
-            
+
             foreach (var color in Color.All)
             {
                 var colorCount = colorCounts.SingleOrDefault(s => s.Color.Id == color.Id);
                 Assert.That(colorCount, Is.Not.Null, $"Color count for '{color.Name}' not found in results");
 
                 var expectedColorCount = shirts
-                    .Count(shirt => shirt.Color.Id == color.Id);
+                    .Count(shirt => shirt.Color.Id == color.Id
+                                && (!searchOptions.Sizes.Any() || searchOptions.Sizes.Contains(shirt.Size))
+                                && (!searchOptions.Colors.Any() || searchOptions.Colors.Contains(shirt.Color))
+                                );
 
                 Assert.That(colorCount.Count, Is.EqualTo(expectedColorCount),
                     $"Color count for '{colorCount.Color.Name}' showing '{colorCount.Count}' should be '{expectedColorCount}'");
             }
-        }
-
-        protected void AssertSearchEngineResults(SearchResults searchResults, SearchOptions searchOptions)
-        {
-            AssertResults(searchResults.Shirts, searchOptions);
-            AssertSizeCounts(searchResults.Shirts, searchOptions, searchResults.SizeCounts);
-            AssertColorCounts(searchResults.Shirts, searchOptions, searchResults.ColorCounts);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ConstructionLine.CodingChallenge
+namespace ConstructionLine.CodingChallenge.Domain
 {
     public class SearchOptions
     {

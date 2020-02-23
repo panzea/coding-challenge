@@ -1,12 +1,14 @@
-﻿using System;
+﻿using ConstructionLine.CodingChallenge.Abstractions;
+using ConstructionLine.CodingChallenge.Domain;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ConstructionLine.CodingChallenge
 {
     public class SearchEngineBase : ISearchEngine
     {
         protected readonly List<Shirt> _shirts;
+        private IFacetCounter facetCounter;
 
         public SearchEngineBase(List<Shirt> shirts)
         {
@@ -16,6 +18,7 @@ namespace ConstructionLine.CodingChallenge
             }
 
             _shirts = shirts;
+            facetCounter = new FacetCounter();
         }
 
         public SearchResults Search(SearchOptions options)
@@ -29,10 +32,10 @@ namespace ConstructionLine.CodingChallenge
             var shirtsList = PerformSearch(options);
 
             // Execute Color count
-            var colorCountsList = CountColors(shirtsList);
+            var colorCountsList = facetCounter.CountColors(shirtsList);
 
             // Execute Size count
-            var sizeCountsList = CountSizes(shirtsList);
+            var sizeCountsList = facetCounter.CountSizes(shirtsList);
 
             return new SearchResults
             {
@@ -50,56 +53,6 @@ namespace ConstructionLine.CodingChallenge
         protected virtual List<Shirt> PerformSearch(SearchOptions options)
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Determine the aggregate counts for all shirt colors in the resultset
-        /// </summary>
-        /// <param name="shirts">List of filtered shirts from search</param>
-        /// <returns>List of aggregate counts of each shirt color</returns>
-        protected virtual List<ColorCount> CountColors(List<Shirt> shirts)
-        {
-            var result = shirts.GroupBy(shirt => shirt.Color)
-                .Select(s => new ColorCount
-                {
-                    Color = s.Key,
-                    Count = s.Count()
-                }).ToList();
-
-            var emptyCounts = Color.All.Where(c => !result.Any(s => s.Color == c))
-                .Select(s => new ColorCount
-                {
-                    Color = s,
-                    Count = 0
-                });
-
-            result.AddRange(emptyCounts);
-            return result;
-        }
-
-        /// <summary>
-        /// Determine the aggregate counts for all shirt sizes in the resultset
-        /// </summary>
-        /// <param name="shirts">List of filtered shirts from search</param>
-        /// <returns>List of aggregate counts of each shirt size</returns>
-        protected virtual List<SizeCount> CountSizes(List<Shirt> shirts)
-        {
-            var result = shirts.GroupBy(shirt => shirt.Size)
-                .Select(s => new SizeCount
-                {
-                    Size = s.Key,
-                    Count = s.Count()
-                }).ToList();
-
-            var emptyCounts = Size.All.Where(c => !result.Any(s => s.Size == c))
-                .Select(s => new SizeCount
-                {
-                    Size = s,
-                    Count = 0
-                });
-
-            result.AddRange(emptyCounts);
-            return result;
         }
     }
 }

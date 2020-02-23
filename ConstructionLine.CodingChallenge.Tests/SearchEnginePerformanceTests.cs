@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ConstructionLine.CodingChallenge.Domain;
 using ConstructionLine.CodingChallenge.Tests.SampleData;
 using NUnit.Framework;
 
@@ -57,7 +58,9 @@ namespace ConstructionLine.CodingChallenge.Tests
             sw.Stop();
             Console.WriteLine($"{testName} finished in {sw.ElapsedMilliseconds} milliseconds");
 
-            AssertSearchEngineResults(results, options);
+            AssertResults(results.Shirts, options);
+            AssertSizeCounts(_shirts, options, results.SizeCounts);
+            AssertColorCounts(_shirts, options, results.ColorCounts);
         }
     }
 }
